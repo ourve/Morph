@@ -1,0 +1,59 @@
+apply plugin: 'war'
+apply plugin: 'idea'
+
+// Definition source which should include.
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+        }
+
+    }
+}
+
+// Access maven center.
+repositories {
+    mavenCentral()
+}
+
+//Override war task addition attributes
+war {
+    webInf {
+        from 'WEB-INF'
+        include '*'
+        include '**/*'
+    }
+}
+
+//--------------------------------- Dependencies definition ---------------------------------
+dependencies {
+    compile(
+            "javax.ws.rs:javax.ws.rs-api:2.0",
+            "org.glassfish.jersey.containers:jersey-container-servlet:2.11",
+    )
+    compile fileTree('lib')
+    runtime(
+
+    )
+    // All the package definition that need to ignore.
+    configurations {
+
+    }
+
+    // Definition provided runtime
+    providedRuntime(
+            "org.apache.tomcat:servlet-api:6.0.39",
+            "javax.servlet:javax.servlet-api:3.0.1",
+            "javax.servlet:servlet-api:2.3",
+    )
+}
+
+
+defaultTasks 'build'
+
+
+task build (overwrite: true ) {
+    dependsOn = ['clean','war']
+
+    war.mustRunAfter clean
+}
