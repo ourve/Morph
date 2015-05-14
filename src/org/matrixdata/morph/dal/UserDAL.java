@@ -22,8 +22,8 @@ public class UserDAL {
     }
 
     public List<RestUser> getUsers() {
-        RestUser user1 = new RestUser("id1");
-        RestUser user2 = new RestUser("id1");
+        RestUser user1 = new RestUser("id1", "male", "MagicYang", "90");
+        RestUser user2 = new RestUser("id2", "male", "Insomnia", "80");
 
         List<RestUser> ret = new ArrayList<RestUser>();
         ret.add(user1);
