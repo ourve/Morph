@@ -1,6 +1,8 @@
 package org.matrixdata.morph.servlet.rest.resource;
 
 import org.apache.log4j.Logger;
+import org.matrixdata.morph.constant.Constant;
+import org.matrixdata.morph.dal.exceptions.RecordExistException;
 import org.matrixdata.morph.servlet.rest.Response;
 import org.matrixdata.morph.servlet.rest.pojo.RestUser;
 import org.matrixdata.morph.servlet.rest.service.UserService;
@@ -25,7 +27,7 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsers() {
         logger.info("Start get users.");
-        Response response = new Response(200, UserService.getUsers());
+        Response response = new Response(Constant.STATUS_OK, UserService.getUsers());
         return response;
     }
 
@@ -42,9 +44,14 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response add(RestUser user) {
-        logger.info(String.format("Start add user. id = %s", user.id));
-        UserService.addUser(user);
-        return new Response(200, null);
+        logger.info(String.format("Start add user. name = %s", user.name));
+        try {
+            UserService.addUser(user);
+        }
+        catch (RecordExistException e) {
+            return new Response(Constant.RECORD_EXIST, null);
+        }
+        return new Response(Constant.STATUS_OK, null);
     }
 
 

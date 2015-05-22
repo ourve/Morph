@@ -2,10 +2,12 @@ package org.matrixdata.morph.dal;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.KeyValue;
+import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.log4j.Logger;
+import org.matrixdata.morph.constant.Constant;
+import org.matrixdata.morph.dal.exceptions.RecordExistException;
 import org.matrixdata.morph.servlet.rest.pojo.RestUser;
 
 import java.io.IOException;
@@ -22,25 +24,66 @@ public class UserDAL {
     }
 
     public List<RestUser> getUsers() {
-        RestUser user1 = new RestUser("id1", "male", "MagicYang", "90");
-        RestUser user2 = new RestUser("id2", "male", "Insomnia", "80");
-
+        Configuration conf = HBaseConfiguration.create();
+        conf.set("hbase.zookeeper.quorum", Constant.HBASE_ZOOKEEPER_QUORUM);
         List<RestUser> ret = new ArrayList<RestUser>();
-        ret.add(user1);
-        ret.add(user2);
+        RestUser currentUser = null;
+
+        try {
+            HTable table = new HTable(conf, Constant.TABLE_USER);
+            Scan scan = new Scan();
+            ResultScanner rs = table.getScanner(scan);
+            for (Result r : rs) {
+                for (KeyValue kv : r.raw()) {
+                    if ((currentUser == null) || (!currentUser.name.equals(new String(kv.getRow())))) {
+                        if (currentUser != null) {
+                            ret.add(currentUser);
+                        }
+                        currentUser = new RestUser();
+                        currentUser.name = new String(kv.getRow());
+                    }
+
+                    if(new String(kv.getQualifier()).equals(Constant.USER_COLUMN_SEX)) {
+                        currentUser.sex = new String(kv.getValue());
+                        continue;
+                    }
+
+                    if(new String(kv.getQualifier()).equals(Constant.USER_COLUMN_CREDIT)) {
+                        currentUser.credit = new String(kv.getValue());
+                    }
+                }
+            }
+            rs.close();
+        }
+        catch (IOException e) {
+            logger.info(e.getMessage());
+        }
+
+        if (currentUser != null) {
+            ret.add(currentUser);
+        }
+
         return ret;
     }
 
-    public void addUser(RestUser user) {
+    public void addUser(RestUser user) throws RecordExistException {
         logger.info("start add user in DAL");
 
         Configuration conf = HBaseConfiguration.create();
-        conf.set("hbase.zookeeper.quorum", "localhost");
+        conf.set("hbase.zookeeper.quorum", Constant.HBASE_ZOOKEEPER_QUORUM);
 
         try {
-            HTable table = new HTable(conf, "users");
-            Put put = new Put(Bytes.toBytes(user.id));
-            put.add(Bytes.toBytes("cf"), Bytes.toBytes("testcolumn"), Bytes.toBytes("testvalue"));
+            HTable table = new HTable(conf, Constant.TABLE_USER);
+
+            Get get = new Get(Bytes.toBytes(user.name));
+            Result result = table.get(get);
+            if (!result.isEmpty()) {
+                throw new RecordExistException();
+            }
+
+            Put put = new Put(Bytes.toBytes(user.name));
+            put.add(Bytes.toBytes(Constant.USER_COLUMNFAMILY), Bytes.toBytes(Constant.USER_COLUMN_SEX), Bytes.toBytes(user.sex));
+            put.add(Bytes.toBytes(Constant.USER_COLUMNFAMILY), Bytes.toBytes(Constant.USER_COLUMN_CREDIT), Bytes.toBytes(user.credit));
             table.put(put);
         }
         catch (IOException e) {
@@ -48,6 +91,5 @@ public class UserDAL {
         }
 
         logger.info("finish add user in DAL");
-        return;
     }
 }

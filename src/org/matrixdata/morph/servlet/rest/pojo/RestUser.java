@@ -1,7 +1,6 @@
 package org.matrixdata.morph.servlet.rest.pojo;
 
 public class RestUser {
-    public String id;
     public String sex;
     public String name;
     public String credit;
@@ -10,8 +9,7 @@ public class RestUser {
 
     }
 
-    public RestUser(String idIn, String sexIn, String nameIn, String creditIn) {
-        id = idIn;
+    public RestUser(String sexIn, String nameIn, String creditIn) {
         sex = sexIn;
         name = nameIn;
         credit = creditIn;

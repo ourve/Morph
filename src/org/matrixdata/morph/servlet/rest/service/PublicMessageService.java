@@ -12,8 +12,4 @@ public class PublicMessageService {
     public static List<RestPublicMessage> getPublicMessages() {
         return PublicMessageDAL.getInstance().getPublicMessages();
     }
-
-    public static void addUser(RestUser user) {
-        UserDAL.getInstance().addUser(user);
-    }
 }
