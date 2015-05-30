@@ -49,7 +49,7 @@ public class PublicMessageDAL {
         String currentRow = null;
 
         try {
-            HTable table = new HTable(conf, Constant.TABLE_USER);
+            HTable table = new HTable(conf, Constant.TABLE_PUBLICMESSAGE);
 
             Scan scan = new Scan(Bytes.toBytes(_getKey(station.getName(), timestampStr)),
                     Bytes.toBytes(_getEndKey(station.getName())));
@@ -129,7 +129,7 @@ public class PublicMessageDAL {
             put.add(Bytes.toBytes(Constant.PUBLICMESSAGE_COLUMNFAMILY), Bytes.toBytes(Constant.PUBLICMESSAGE_COLUMN_LONGITUDE), Bytes.toBytes(message.longitude));
             put.add(Bytes.toBytes(Constant.PUBLICMESSAGE_COLUMNFAMILY), Bytes.toBytes(Constant.PUBLICMESSAGE_COLUMN_LATITUDE), Bytes.toBytes(message.latitude));
             put.add(Bytes.toBytes(Constant.PUBLICMESSAGE_COLUMNFAMILY), Bytes.toBytes(Constant.PUBLICMESSAGE_COLUMN_USERID), Bytes.toBytes(message.userid));
-            put.add(Bytes.toBytes(Constant.PUBLICMESSAGE_COLUMNFAMILY), Bytes.toBytes(Constant.PUBLICMESSAGE_COLUMN_TIMESTAMP), Bytes.toBytes(message.timestamp));
+            put.add(Bytes.toBytes(Constant.PUBLICMESSAGE_COLUMNFAMILY), Bytes.toBytes(Constant.PUBLICMESSAGE_COLUMN_TIMESTAMP), Bytes.toBytes(timestampStr));
             table.put(put);
         }
         catch (IOException e) {
