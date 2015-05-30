@@ -1,11 +1,11 @@
 package org.matrixdata.morph.servlet.rest.resource;
 
 import org.apache.log4j.Logger;
+import org.matrixdata.morph.constant.Constant;
+import org.matrixdata.morph.dal.exceptions.RecordExistException;
 import org.matrixdata.morph.servlet.rest.Response;
 import org.matrixdata.morph.servlet.rest.pojo.RestPublicMessage;
-import org.matrixdata.morph.servlet.rest.pojo.RestUser;
 import org.matrixdata.morph.servlet.rest.service.PublicMessageService;
-import org.matrixdata.morph.servlet.rest.service.UserService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -27,7 +27,7 @@ public class PublicMessageResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPublicMessages() {
         logger.info("Start get users.");
-        Response response = new Response(200, PublicMessageService.getPublicMessages());
+        Response response = new Response(Constant.STATUS_OK, PublicMessageService.getPublicMessages());
         return response;
     }
 
@@ -36,14 +36,20 @@ public class PublicMessageResource {
     @Path("{id:\\d+}")
     public String getUser(@PathParam("id") int ruleId) {
         //todo
-        return "Got it!";
+        return "to do";
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response add(RestPublicMessage publicMessage) {
-        logger.info(String.format("Start add user. id = %s", publicMessage.id));
-        return new Response(200, null);
+        logger.info(String.format("Start add publicmessage"));
+        try {
+            PublicMessageService.addPublicMessage(publicMessage);
+        }
+        catch (RecordExistException e) {
+            return new Response(Constant.RECORD_EXIST, null);
+        }
+        return new Response(Constant.STATUS_OK, null);
     }
 }
