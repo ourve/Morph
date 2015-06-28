@@ -51,6 +51,15 @@ public class UserDAL {
                     if(new String(kv.getQualifier()).equals(Constant.USER_COLUMN_CREDIT)) {
                         currentUser.credit = new String(kv.getValue());
                     }
+
+                    if(new String(kv.getQualifier()).equals(Constant.USER_COLUMN_PASSWORD)) {
+                        currentUser.password = new String(kv.getValue());
+                        continue;
+                    }
+
+                    if(new String(kv.getQualifier()).equals(Constant.USER_COLUMN_PHONENUMBER)) {
+                        currentUser.phoneNumber = new String(kv.getValue());
+                    }
                 }
             }
             rs.close();
@@ -82,6 +91,8 @@ public class UserDAL {
             }
 
             Put put = new Put(Bytes.toBytes(user.username));
+            put.add(Bytes.toBytes(Constant.USER_COLUMNFAMILY), Bytes.toBytes(Constant.USER_COLUMN_PASSWORD), Bytes.toBytes(user.password));
+            put.add(Bytes.toBytes(Constant.USER_COLUMNFAMILY), Bytes.toBytes(Constant.USER_COLUMN_PHONENUMBER), Bytes.toBytes(user.phoneNumber));
             put.add(Bytes.toBytes(Constant.USER_COLUMNFAMILY), Bytes.toBytes(Constant.USER_COLUMN_SEX), Bytes.toBytes(user.sex));
             put.add(Bytes.toBytes(Constant.USER_COLUMNFAMILY), Bytes.toBytes(Constant.USER_COLUMN_CREDIT), Bytes.toBytes(user.credit));
             table.put(put);
@@ -91,5 +102,56 @@ public class UserDAL {
         }
 
         logger.info("finish add user in DAL");
+    }
+
+    public RestUser getUser(String username) {
+        Configuration conf = HBaseConfiguration.create();
+        conf.set("hbase.zookeeper.quorum", Constant.HBASE_ZOOKEEPER_QUORUM);
+        RestUser ret = null;
+
+        try {
+            HTable table = new HTable(conf, Constant.TABLE_USER);
+            Get get = new Get(Bytes.toBytes(username));
+            Result result = table.get(get);
+            if (result.isEmpty()) {
+                return ret;
+            }
+            KeyValue kv = result.getColumnLatest(Bytes.toBytes(Constant.USER_COLUMNFAMILY),
+                    Bytes.toBytes(Constant.USER_COLUMN_PASSWORD));
+            String password = new String(kv.getValue());
+
+            kv = result.getColumnLatest(Bytes.toBytes(Constant.USER_COLUMNFAMILY),
+                    Bytes.toBytes(Constant.USER_COLUMN_PHONENUMBER));
+            String phoneNumber = new String(kv.getValue());
+
+            kv = result.getColumnLatest(Bytes.toBytes(Constant.USER_COLUMNFAMILY),
+                    Bytes.toBytes(Constant.USER_COLUMN_SEX));
+            String sex = new String(kv.getValue());
+
+            kv = result.getColumnLatest(Bytes.toBytes(Constant.USER_COLUMNFAMILY),
+                    Bytes.toBytes(Constant.USER_COLUMN_CREDIT));
+            String credit = new String(kv.getValue());
+
+            ret = new RestUser(username, password, phoneNumber, sex, credit);
+        }
+        catch (IOException e) {
+            logger.info(e.getMessage());
+        }
+
+        return ret;
+    }
+
+    public void deleteUser(String username) {
+        Configuration conf = HBaseConfiguration.create();
+        conf.set("hbase.zookeeper.quorum", Constant.HBASE_ZOOKEEPER_QUORUM);
+
+        try {
+            HTable table = new HTable(conf, Constant.TABLE_USER);
+            Delete delete = new Delete(Bytes.toBytes(username));
+            table.delete(delete);
+        }
+        catch (IOException e) {
+            logger.info(e.getMessage());
+        }
     }
 }

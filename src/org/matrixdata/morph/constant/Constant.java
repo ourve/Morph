@@ -6,6 +6,8 @@ public class Constant {
     // table user
     public static String TABLE_USER = "users";
     public static String USER_COLUMNFAMILY = "cf";
+    public static String USER_COLUMN_PASSWORD = "password";
+    public static String USER_COLUMN_PHONENUMBER = "phonenumber";
     public static String USER_COLUMN_SEX = "sex";
     public static String USER_COLUMN_CREDIT = "credit";
 

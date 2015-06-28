@@ -42,7 +42,7 @@ public class UserResource {
     }
 
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("/identify/{phoneNumber}")
     public Response getIdentify(@PathParam("phoneNumber") String phoneNumber) {
         logger.info("Start get Identify.");
@@ -57,10 +57,26 @@ public class UserResource {
         return new Response(Constant.STATUS_OK, Constant.STATUS_OK_STR, null);
     }
 
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{username}")
+    public Response deleteUser(@PathParam("username") String username) {
+        logger.info("Start delete user.");
+
+        try {
+            UserService.deleteUser(username);
+        }
+        catch (MorphRestException e) {
+            return new Response(e.status, e.errorMsg, null);
+        }
+
+        return new Response(Constant.STATUS_OK, Constant.STATUS_OK_STR, null);
+    }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/checkidentify/{identify}")
+    @Path("{identify}")
     public Response add(RestUser user, @PathParam("identify") String identify) {
         logger.info(String.format("Start add user. name = %s", user.username));
         try {

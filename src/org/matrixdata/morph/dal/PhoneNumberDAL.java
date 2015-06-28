@@ -108,4 +108,18 @@ public class PhoneNumberDAL {
 
         return ret;
     }
+
+    public void deletePhoneNumber(String phoneNumber) {
+        Configuration conf = HBaseConfiguration.create();
+        conf.set("hbase.zookeeper.quorum", Constant.HBASE_ZOOKEEPER_QUORUM);
+
+        try {
+            HTable table = new HTable(conf, Constant.TABLE_PHONENUMBER);
+            Delete delete = new Delete(Bytes.toBytes(phoneNumber));
+            table.delete(delete);
+        }
+        catch (IOException e) {
+            logger.info(e.getMessage());
+        }
+    }
 }
