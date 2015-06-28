@@ -18,8 +18,29 @@ public class Constant {
     public static String PUBLICMESSAGE_COLUMN_USERID = "userid";
     public static String PUBLICMESSAGE_COLUMN_TIMESTAMP = "timestamp";
 
+    // table phonenumber
+    public static String TABLE_PHONENUMBER = "phonenumbers";
+    public static String PHONENUMBER_COLUMNFAMILY = "cf";
+    public static String PHONENUMBER_COLUMN_IDENTIFY = "identify";
+    public static String PHONENUMBER_COLUMN_USERNAME = "username";
+    public static String PHONENUMBER_COLUMN_CREATE_TIME = "createtime";
+    public static String PHONENUMBER_COLUMN_STATUS = "status";
+    public static String PHONENUMBER_STATUS_REGEISTERED = "registered";
+    public static String PHONENUMBER_STATUS_UNAVAILABLE = "unavailable";
+    public static String PHONENUMBER_STATUS_NOT_EXIST = "notexist";
+
     //status
     public static int STATUS_OK = 200;
-    public static int RECORD_EXIST = 401;
+    public static String STATUS_OK_STR = "ok";
 
+    public static int AUTH_FAIL = 401;
+    public static String AUTH_FAIL_STR = "auth fail";
+
+    public static int RECORD_EXIST = 501;
+    public static String RECORD_EXIST_STR = "record exist";
+    public static int RECORD_NOT_EXIST = 502;
+    public static String RECORD_NOT_EXIST_STR = "record not exist";
+
+
+    public static int IDENTIFY_LENGTH = 6;
 }

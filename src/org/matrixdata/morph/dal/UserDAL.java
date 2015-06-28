@@ -35,12 +35,12 @@ public class UserDAL {
             ResultScanner rs = table.getScanner(scan);
             for (Result r : rs) {
                 for (KeyValue kv : r.raw()) {
-                    if ((currentUser == null) || (!currentUser.name.equals(new String(kv.getRow())))) {
+                    if ((currentUser == null) || (!currentUser.username.equals(new String(kv.getRow())))) {
                         if (currentUser != null) {
                             ret.add(currentUser);
                         }
                         currentUser = new RestUser();
-                        currentUser.name = new String(kv.getRow());
+                        currentUser.username = new String(kv.getRow());
                     }
 
                     if(new String(kv.getQualifier()).equals(Constant.USER_COLUMN_SEX)) {
@@ -75,13 +75,13 @@ public class UserDAL {
         try {
             HTable table = new HTable(conf, Constant.TABLE_USER);
 
-            Get get = new Get(Bytes.toBytes(user.name));
+            Get get = new Get(Bytes.toBytes(user.username));
             Result result = table.get(get);
             if (!result.isEmpty()) {
                 throw new RecordExistException();
             }
 
-            Put put = new Put(Bytes.toBytes(user.name));
+            Put put = new Put(Bytes.toBytes(user.username));
             put.add(Bytes.toBytes(Constant.USER_COLUMNFAMILY), Bytes.toBytes(Constant.USER_COLUMN_SEX), Bytes.toBytes(user.sex));
             put.add(Bytes.toBytes(Constant.USER_COLUMNFAMILY), Bytes.toBytes(Constant.USER_COLUMN_CREDIT), Bytes.toBytes(user.credit));
             table.put(put);

@@ -1,6 +1,7 @@
 package org.matrixdata.morph.servlet.rest.resource;
 
 import org.apache.log4j.Logger;
+import org.matrixdata.morph.constant.Constant;
 import org.matrixdata.morph.servlet.rest.Response;
 import org.matrixdata.morph.servlet.rest.service.AroundMessageService;
 
@@ -17,7 +18,7 @@ public class AroundMessageResource {
     public Response getPublicMessages(@PathParam("longitude") double longitude,
                                       @PathParam("latitude") double latitude) {
         logger.info(String.format("Start get around messages, longitude=%f, latitude=%f.", longitude, latitude));
-        Response response = new Response(200, AroundMessageService.getAroundMessages(longitude, latitude));
+        Response response = new Response(Constant.STATUS_OK, Constant.STATUS_OK_STR, AroundMessageService.getAroundMessages(longitude, latitude));
         return response;
     }
 }

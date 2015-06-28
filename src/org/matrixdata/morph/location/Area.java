@@ -12,6 +12,10 @@ public class Area {
         _geohash = geohash;
     }
 
+    public GeoHash getGeoHash() {
+        return _geohash;
+    }
+
     public String baseCode() {
         return _geohash.toBase32();
     }

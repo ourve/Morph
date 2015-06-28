@@ -1,5 +1,6 @@
 package org.matrixdata.morph.location;
 
+import ch.hsr.geohash.BoundingBox;
 import ch.hsr.geohash.GeoHash;
 
 /**
@@ -19,7 +20,8 @@ public class AreaManager {
     }
 
     public static void main(String[] args) {
-        System.out.print(System.currentTimeMillis());
+        GeoHash geoHash = GeoHash.withCharacterPrecision(39.99, 116.359848, 5);
+        BoundingBox box = geoHash.getBoundingBox();
     }
 
 }

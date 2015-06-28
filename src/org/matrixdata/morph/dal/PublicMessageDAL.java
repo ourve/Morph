@@ -25,13 +25,65 @@ public class PublicMessageDAL {
     }
 
     public List<RestPublicMessage> getPublicMessages() {
-        RestPublicMessage message1 = new RestPublicMessage("This is a test message", "116.359848", "39.989933", "id1", "0");
-        RestPublicMessage message2 = new RestPublicMessage("Another test message", "116.344434", "39.998568", "id2", "0");
-
+         Configuration conf = HBaseConfiguration.create();
+        conf.set("hbase.zookeeper.quorum", Constant.HBASE_ZOOKEEPER_QUORUM);
 
         List<RestPublicMessage> ret = new ArrayList<RestPublicMessage>();
-        ret.add(message1);
-        ret.add(message2);
+        RestPublicMessage currentMessage = null;
+        String currentRow = null;
+
+        try {
+            HTable table = new HTable(conf, Constant.TABLE_PUBLICMESSAGE);
+
+            Scan scan = new Scan();
+
+            ResultScanner rs = table.getScanner(scan);
+            for (Result r : rs) {
+                for (KeyValue kv : r.raw()) {
+                    if ((currentMessage == null) || (!currentRow.equals(new String(kv.getRow())))) {
+                        if (currentMessage != null) {
+                            ret.add(currentMessage);
+                        }
+                        currentMessage = new RestPublicMessage();
+                        currentMessage.timestamp = _getTimestampStr(new String(kv.getRow()));
+                        currentRow = new String(kv.getRow());
+                    }
+
+                    if(new String(kv.getQualifier()).equals(Constant.PUBLICMESSAGE_COLUMN_TEXT)) {
+                        currentMessage.text = new String(kv.getValue());
+                        continue;
+                    }
+
+                    if(new String(kv.getQualifier()).equals(Constant.PUBLICMESSAGE_COLUMN_LONGITUDE)) {
+                        currentMessage.longitude = new String(kv.getValue());
+                        continue;
+                    }
+
+                    if(new String(kv.getQualifier()).equals(Constant.PUBLICMESSAGE_COLUMN_LATITUDE)) {
+                        currentMessage.latitude = new String(kv.getValue());
+                        continue;
+                    }
+
+                    if(new String(kv.getQualifier()).equals(Constant.PUBLICMESSAGE_COLUMN_USERID)) {
+                        currentMessage.userid = new String(kv.getValue());
+                        continue;
+                    }
+
+                    if(new String(kv.getQualifier()).equals(Constant.PUBLICMESSAGE_COLUMN_TIMESTAMP)) {
+                        currentMessage.timestamp = new String(kv.getValue());
+                    }
+                }
+            }
+            rs.close();
+        }
+        catch (IOException e) {
+            logger.info(e.getMessage());
+        }
+
+        if (currentMessage != null) {
+            ret.add(currentMessage);
+        }
+
         return ret;
     }
 

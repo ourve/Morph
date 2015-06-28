@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.matrixdata.morph.constant.Constant;
 import org.matrixdata.morph.dal.exceptions.RecordExistException;
 import org.matrixdata.morph.servlet.rest.Response;
+import org.matrixdata.morph.servlet.rest.exception.MorphRestException;
 import org.matrixdata.morph.servlet.rest.pojo.RestUser;
 import org.matrixdata.morph.servlet.rest.service.UserService;
 
@@ -27,7 +28,7 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsers() {
         logger.info("Start get users.");
-        Response response = new Response(Constant.STATUS_OK, UserService.getUsers());
+        Response response = new Response(Constant.STATUS_OK, Constant.STATUS_OK_STR, UserService.getUsers());
         return response;
     }
 
@@ -40,18 +41,35 @@ public class UserResource {
         return "Got it!";
     }
 
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    @Path("/identify/{phoneNumber}")
+    public Response getIdentify(@PathParam("phoneNumber") String phoneNumber) {
+        logger.info("Start get Identify.");
+
+        try {
+            UserService.getIdentify(phoneNumber);
+        }
+        catch (MorphRestException e) {
+            return new Response(e.status, e.errorMsg, null);
+        }
+
+        return new Response(Constant.STATUS_OK, Constant.STATUS_OK_STR, null);
+    }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response add(RestUser user) {
-        logger.info(String.format("Start add user. name = %s", user.name));
+    @Path("/checkidentify/{identify}")
+    public Response add(RestUser user, @PathParam("identify") String identify) {
+        logger.info(String.format("Start add user. name = %s", user.username));
         try {
-            UserService.addUser(user);
+            UserService.addUser(user, identify);
         }
-        catch (RecordExistException e) {
-            return new Response(Constant.RECORD_EXIST, null);
+        catch (MorphRestException e) {
+            return new Response(e.status, e.errorMsg, null);
         }
-        return new Response(Constant.STATUS_OK, null);
+        return new Response(Constant.STATUS_OK, Constant.STATUS_OK_STR, null);
     }
 
 
