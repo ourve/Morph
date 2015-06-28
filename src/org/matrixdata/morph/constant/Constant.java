@@ -36,6 +36,9 @@ public class Constant {
     public static int AUTH_FAIL = 401;
     public static String AUTH_FAIL_STR = "auth fail";
 
+    public static int STATUS_UNKNOWN_ERROR = 500;
+    public static String STATUS_UNKNOWN_ERROR_STR = "unknown error";
+
     public static int RECORD_EXIST = 501;
     public static String RECORD_EXIST_STR = "record exist";
     public static int RECORD_NOT_EXIST = 502;

@@ -31,7 +31,11 @@ dependencies {
             "javax.servlet:javax.servlet-api:3.0.1",
             "javax.ws.rs:javax.ws.rs-api:2.0",
             "org.glassfish.jersey.containers:jersey-container-servlet:2.11",
-            "org.glassfish.jersey.media:jersey-media-json-jackson:2.11"
+            "org.glassfish.jersey.media:jersey-media-json-jackson:2.11",
+            "org.apache.httpcomponents:httpclient:4.3.4",
+            "org.apache.httpcomponents:httpclient-cache:4.3.4",
+            "org.apache.httpcomponents:httpcore:4.3.2",
+            "org.apache.httpcomponents:httpmime:4.3.4"
     )
 
     compile fileTree(dir: './libs', include: '*.jar');
