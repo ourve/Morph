@@ -14,7 +14,7 @@
             <param-name>jersey.config.server.provider.packages</param-name>
             <param-value>org.matrixdata.morph.servlet.rest</param-value>
         </init-param>
-         <init-param>
+        <init-param>
             <param-name>javax.ws.rs.Application</param-name>
             <param-value>org.matrixdata.morph.servlet.rest.APIApplication</param-value>
         </init-param>
@@ -24,4 +24,13 @@
         <servlet-name>jersey-servlet</servlet-name>
         <url-pattern>/rest/*</url-pattern>
     </servlet-mapping>
+
+    <filter>
+        <filter-name>auth</filter-name>
+        <filter-class>org.matrixdata.morph.servlet.rest.filter.AuthFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>auth</filter-name>
+        <url-pattern>/rest/*</url-pattern>
+    </filter-mapping>
 </web-app>

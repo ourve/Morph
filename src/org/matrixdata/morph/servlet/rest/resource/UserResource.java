@@ -89,4 +89,11 @@ public class UserResource {
     }
 
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("notauth")
+    public Response getUserNotAuth() {
+        Response response = new Response(Constant.AUTH_FAIL, Constant.AUTH_FAIL_STR, null);
+        return response;
+    }
 }

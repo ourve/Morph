@@ -31,6 +31,14 @@ public class Constant {
     public static String PHONENUMBER_STATUS_UNAVAILABLE = "unavailable";
     public static String PHONENUMBER_STATUS_NOT_EXIST = "notexist";
 
+    // table activearea
+    public static String TABLE_ACTIVEAREA = "activeareas";
+    public static String ACTIVEAREA_COLUMNFAMILY = "cf";
+
+    // table station
+    public static String TABLE_STATION = "stations";
+    public static String STATION_COLUMNFAMILY = "cf";
+
     //status
     public static int STATUS_OK = 200;
     public static String STATUS_OK_STR = "ok";
