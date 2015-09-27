@@ -4,6 +4,8 @@ public class Constant {
     public static String HBASE_ZOOKEEPER_QUORUM = "localhost";
     public static String DEFAULT_STATION = "default";
 
+    public static Integer SMALLEST_AREA_CODE = 10;
+
     // table user
     public static String TABLE_USER = "users";
     public static String USER_COLUMNFAMILY = "cf";
@@ -51,9 +53,11 @@ public class Constant {
     public static String AREA_COLUMNFAMILY = "cf";
     public static String AREA_COLUMN_STATION = "station";
 
-    // table station
+    // table stations
     public static String TABLE_STATION = "stations";
     public static String STATION_COLUMNFAMILY = "cf";
+    public static String STATION_COLUMN_AREANUM = "areanum";
+    public static String STATION_COLUMN_AREA_PREFIX = "area_";
 
     //status
     public static int STATUS_OK = 200;

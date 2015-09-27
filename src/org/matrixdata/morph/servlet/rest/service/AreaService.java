@@ -4,16 +4,14 @@ import ch.hsr.geohash.GeoHash;
 import org.matrixdata.morph.constant.Constant;
 import org.matrixdata.morph.dal.AreaDAL;
 import org.matrixdata.morph.dal.PublicMessageDAL;
-import org.matrixdata.morph.dal.UserDAL;
+import org.matrixdata.morph.dal.StationDAL;
 import org.matrixdata.morph.dal.exceptions.RecordExistException;
 import org.matrixdata.morph.location.Area;
 import org.matrixdata.morph.location.AreaManager;
-import org.matrixdata.morph.location.Station;
-import org.matrixdata.morph.location.StationManager;
 import org.matrixdata.morph.servlet.rest.exception.MorphRestException;
 import org.matrixdata.morph.servlet.rest.pojo.RestArea;
 import org.matrixdata.morph.servlet.rest.pojo.RestPublicMessage;
-import org.matrixdata.morph.servlet.rest.pojo.RestUser;
+import org.matrixdata.morph.servlet.rest.pojo.RestStation;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,7 +43,13 @@ public class AreaService {
 
     public static void addArea(RestArea area) throws MorphRestException {
         try {
+            RestStation station = StationDAL.getInstance().getStation(area.station);
+            if (station == null) {
+                throw new MorphRestException(Constant.BAD_REQUEST, "not exist station : " + area.station);
+            }
+
             AreaDAL.getInstance().addArea(area);
+            StationDAL.getInstance().addArea(area.station, area.areacode);
         }
         catch (RecordExistException e) {
             throw new MorphRestException(Constant.RECORD_EXIST, Constant.RECORD_EXIST_STR);
@@ -54,7 +58,6 @@ public class AreaService {
 
     public static List<RestArea> getAreas() {
         List<RestArea> areas = AreaDAL.getInstance().getAreas();
-
         return areas;
     }
 

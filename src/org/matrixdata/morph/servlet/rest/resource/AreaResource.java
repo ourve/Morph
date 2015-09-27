@@ -1,7 +1,9 @@
 package org.matrixdata.morph.servlet.rest.resource;
 
+import ch.hsr.geohash.GeoHash;
 import org.apache.log4j.Logger;
 import org.matrixdata.morph.constant.Constant;
+import org.matrixdata.morph.dal.AreaDAL;
 import org.matrixdata.morph.servlet.rest.Response;
 import org.matrixdata.morph.servlet.rest.exception.MorphRestException;
 import org.matrixdata.morph.servlet.rest.pojo.RestArea;
@@ -14,15 +16,14 @@ import javax.ws.rs.core.MediaType;
 public class AreaResource {
     Logger logger = Logger.getLogger(AreaResource.class);
 
-    @GET
+    /*@GET
     @Path("/activeareas")
     @Produces(MediaType.APPLICATION_JSON)
-    //todo
     public Response getActiveAreas() {
         logger.info("Start get active areas.");
         Response response = new Response(Constant.STATUS_OK, Constant.STATUS_OK_STR, AreaService.getActiveAreas());
         return response;
-    }
+    }*/
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -41,12 +42,17 @@ public class AreaResource {
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{longitude:[\\d.]+}/{latitude:[\\d.]+}/{length:\\d+}")
+    @Path("{longitude:[\\d.]+}/{latitude:[\\d.]+}")
     public Response getArea(@PathParam("longitude") double longitude,
-                            @PathParam("latitude") double latitude,
-                            @PathParam("length") int length) {
-        //todo
-        return new Response(Constant.STATUS_OK, Constant.STATUS_OK_STR, null);
+                            @PathParam("latitude") double latitude) {
+        GeoHash geoHash = GeoHash.withCharacterPrecision(latitude, longitude, Constant.SMALLEST_AREA_CODE);
+        String areaCode = AreaDAL.getInstance().getAreaFromGeohash(geoHash.toBase32());
+        RestArea area = null;
+        if (areaCode != null) {
+            area = AreaDAL.getInstance().getArea(areaCode);
+        }
+
+        return new Response(Constant.STATUS_OK, Constant.STATUS_OK_STR, area);
     }
 
     @GET

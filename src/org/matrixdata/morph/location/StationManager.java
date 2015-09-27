@@ -1,5 +1,7 @@
 package org.matrixdata.morph.location;
 
+import org.matrixdata.morph.constant.Constant;
+
 /**
  * current stations of map
  */
@@ -11,6 +13,10 @@ public class StationManager {
     }
 
     public Station getStation(Area area) {
-        return new Station(area.baseCode());
+        String stationName =  area.getStation();
+        if (stationName == null) {
+            stationName = Constant.DEFAULT_STATION;
+        }
+        return new Station(stationName);
     }
 }

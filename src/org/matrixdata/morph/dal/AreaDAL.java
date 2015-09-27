@@ -71,7 +71,7 @@ public class AreaDAL {
         conf.set("hbase.zookeeper.quorum", Constant.HBASE_ZOOKEEPER_QUORUM);
 
         try {
-            GeoHash geoHash = GeoHash.fromBinaryString(area.areacode);
+            GeoHash geoHash = GeoHash.fromGeohashString(area.areacode);
         }
         catch (Exception e) {
             throw new MorphRestException(Constant.BAD_REQUEST, "not a vaild gohash: " + area.areacode);
@@ -99,6 +99,36 @@ public class AreaDAL {
         }
 
         logger.info("finish add area in DAL");
+    }
+
+    public String getAreaFromGeohash(String areacode) {
+        Configuration conf = HBaseConfiguration.create();
+        conf.set("hbase.zookeeper.quorum", Constant.HBASE_ZOOKEEPER_QUORUM);
+        String lastArea = null;
+
+        try {
+            HTable table = new HTable(conf, Constant.TABLE_AREA);
+            String startcode = areacode.substring(0, 1);
+            Scan scan = new Scan(Bytes.toBytes(startcode));
+            ResultScanner rs = table.getScanner(scan);
+            for (Result r : rs) {
+                for (KeyValue kv : r.raw()) {
+                    String currentArea = new String(kv.getRow());
+                    if (!areacode.startsWith(currentArea)) {
+                        rs.close();
+                        return lastArea;
+                    }
+                    lastArea = new String(kv.getRow());
+                }
+            }
+            rs.close();
+            return lastArea;
+        }
+        catch (IOException e) {
+            logger.info(e.getMessage());
+        }
+
+        return null;
     }
 
     public RestArea getArea(String areacode) {
