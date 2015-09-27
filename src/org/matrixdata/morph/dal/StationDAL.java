@@ -28,6 +28,7 @@ public class StationDAL {
         Configuration conf = HBaseConfiguration.create();
         conf.set("hbase.zookeeper.quorum", Constant.HBASE_ZOOKEEPER_QUORUM);
         List<RestStation> ret = new ArrayList<RestStation>();
+        List<String> currentArea = new ArrayList<>();
         RestStation currentStation = null;
 
         try {
@@ -38,7 +39,9 @@ public class StationDAL {
                 for (KeyValue kv : r.raw()) {
                     if ((currentStation == null) || (!currentStation.name.equals(new String(kv.getRow())))) {
                         if (currentStation != null) {
+                            currentStation.areas = currentArea;
                             ret.add(currentStation);
+                            currentArea = new ArrayList<>();
                         }
                         currentStation = new RestStation();
                         currentStation.name = new String(kv.getRow());
@@ -47,6 +50,9 @@ public class StationDAL {
                     if(new String(kv.getQualifier()).equals(Constant.AREA_COLUMN_STATION)) {
                         String number = new String(kv.getValue());
                         continue;
+                    }
+                    else {
+                        currentArea.add(new String(kv.getValue()));
                     }
                 }
             }
@@ -57,6 +63,7 @@ public class StationDAL {
         }
 
         if (currentStation != null) {
+            currentStation.areas = currentArea;
             ret.add(currentStation);
         }
 
@@ -104,7 +111,14 @@ public class StationDAL {
             KeyValue kv = result.getColumnLatest(Bytes.toBytes(Constant.STATION_COLUMNFAMILY),
                     Bytes.toBytes(Constant.STATION_COLUMN_AREANUM));
             String number = new String(kv.getValue());
-            ret = new RestStation(name, null);
+            List<String> areas = new ArrayList<>();
+            for (int i = 0; i < Integer.parseInt(number); i++) {
+                KeyValue areakv = result.getColumnLatest(Bytes.toBytes(Constant.STATION_COLUMNFAMILY),
+                        Bytes.toBytes(Constant.STATION_COLUMN_AREA_PREFIX + i));
+                String area = new String(areakv.getValue());
+                areas.add(area);
+            }
+            ret = new RestStation(name, areas);
         }
         catch (IOException e) {
             logger.info(e.getMessage());
