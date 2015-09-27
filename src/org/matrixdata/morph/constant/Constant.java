@@ -35,6 +35,11 @@ public class Constant {
     public static String TABLE_ACTIVEAREA = "activeareas";
     public static String ACTIVEAREA_COLUMNFAMILY = "cf";
 
+    // table areas
+    public static String TABLE_AREA = "areas";
+    public static String AREA_COLUMNFAMILY = "cf";
+    public static String AREA_COLUMN_STATION = "station";
+
     // table station
     public static String TABLE_STATION = "stations";
     public static String STATION_COLUMNFAMILY = "cf";

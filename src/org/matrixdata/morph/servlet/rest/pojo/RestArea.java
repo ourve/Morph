@@ -15,8 +15,10 @@ public class RestArea {
 
     public String maxLatitude;
 
-    public RestArea() {
+    public String station;
 
+    public RestArea() {
+        station = "";
     }
 
     public RestArea(GeoHash geoHash) {
@@ -26,5 +28,10 @@ public class RestArea {
         maxLongitude = String.format("%f", box.getMaxLon());
         minLatitude = String.format("%f", box.getMinLat());
         maxLatitude = String.format("%f", box.getMaxLat());
+    }
+
+    public RestArea(String areacodeIn, String stationIn) {
+        areacode = areacodeIn;
+        station = stationIn;
     }
 }

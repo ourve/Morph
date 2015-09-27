@@ -5,9 +5,7 @@ import org.matrixdata.morph.constant.Constant;
 import org.matrixdata.morph.servlet.rest.Response;
 import org.matrixdata.morph.servlet.rest.exception.MorphRestException;
 import org.matrixdata.morph.servlet.rest.pojo.RestArea;
-import org.matrixdata.morph.servlet.rest.pojo.RestPublicMessage;
 import org.matrixdata.morph.servlet.rest.service.AreaService;
-import org.matrixdata.morph.servlet.rest.service.PublicMessageService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -29,8 +27,14 @@ public class AreaResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addActiveArea(RestArea area) {
-        //todo
+    public Response addArea(RestArea area) {
+        logger.info(String.format("Start add area. code = %s", area.areacode));
+        try {
+            AreaService.addArea(area);
+        }
+        catch (MorphRestException e) {
+            return new Response(e.status, e.errorMsg, null);
+        }
         return new Response(Constant.STATUS_OK, Constant.STATUS_OK_STR, null);
     }
 
@@ -45,5 +49,11 @@ public class AreaResource {
         return new Response(Constant.STATUS_OK, Constant.STATUS_OK_STR, null);
     }
 
-
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAreas() {
+        logger.info("Start get areas.");
+        Response response = new Response(Constant.STATUS_OK, Constant.STATUS_OK_STR, AreaService.getAreas());
+        return response;
+    }
 }
