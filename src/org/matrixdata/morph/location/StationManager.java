@@ -13,6 +13,9 @@ public class StationManager {
     }
 
     public Station getStation(Area area) {
+        if (area == null) {
+            return new Station(Constant.DEFAULT_STATION);
+        }
         String stationName =  area.getStation();
         if (stationName == null) {
             stationName = Constant.DEFAULT_STATION;
