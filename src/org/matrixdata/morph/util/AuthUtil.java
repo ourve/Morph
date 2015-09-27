@@ -12,7 +12,28 @@ public class AuthUtil {
     static Logger logger = Logger.getLogger(AuthUtil.class);
 
     public static boolean verify(HttpServletRequest request) {
-        if (request.getHeader("Authorization") == null) {
+        if (!_needVerifyUser(request)) {
+            return true;
+        }
+
+        return _verifyUser(request);
+    }
+
+    private static boolean _needVerifyUser(HttpServletRequest request) {
+        if (request.getRequestURL().toString().contains("/rest/user/identify")) {
+            return false;
+        }
+
+        if (request.getMethod().equalsIgnoreCase("POST")
+                && request.getRequestURL().toString().contains("/rest/user/")) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static boolean _verifyUser(HttpServletRequest request) {
+         if (request.getHeader("Authorization") == null) {
             return false;
         }
 

@@ -1,0 +1,143 @@
+package org.matrixdata.morph.dal;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.KeyValue;
+import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.log4j.Logger;
+import org.matrixdata.morph.constant.Constant;
+import org.matrixdata.morph.dal.exceptions.RecordExistException;
+import org.matrixdata.morph.location.Station;
+import org.matrixdata.morph.servlet.rest.pojo.RestComment;
+import org.matrixdata.morph.servlet.rest.pojo.RestPublicMessage;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class CommentDAL {
+    static Logger logger = Logger.getLogger(CommentDAL.class);
+
+    static private CommentDAL _INSTANCE = new CommentDAL();
+
+    static public CommentDAL getInstance() {
+        return _INSTANCE;
+    }
+
+    public List<RestComment> getComments(String messageid) {
+        Configuration conf = HBaseConfiguration.create();
+        conf.set("hbase.zookeeper.quorum", Constant.HBASE_ZOOKEEPER_QUORUM);
+
+        List<RestComment> ret = new ArrayList<RestComment>();
+        RestComment currentComment = null;
+        String currentRow = null;
+
+        try {
+            HTable table = new HTable(conf, Constant.TABLE_COMMENT);
+
+            Scan scan = new Scan(Bytes.toBytes(messageid),
+                    Bytes.toBytes(_getEndKey(messageid)));
+
+            ResultScanner rs = table.getScanner(scan);
+            for (Result r : rs) {
+                for (KeyValue kv : r.raw()) {
+                    if ((currentComment == null) || (!currentRow.equals(new String(kv.getRow())))) {
+                        if (currentComment != null) {
+                            currentComment.commentid = currentRow;
+                            ret.add(currentComment);
+                        }
+                        currentComment = new RestComment();
+                        currentComment.timestamp = _getTimestampStr(new String(kv.getRow()));
+                        currentRow = new String(kv.getRow());
+                    }
+
+                    if(new String(kv.getQualifier()).equals(Constant.COMMENT_COLUMN_USERNAME)) {
+                        currentComment.username = new String(kv.getValue());
+                        continue;
+                    }
+
+                    if(new String(kv.getQualifier()).equals(Constant.COMMENT_COLUMN_CONTENT)) {
+                        currentComment.content = new String(kv.getValue());
+                        continue;
+                    }
+
+                    if(new String(kv.getQualifier()).equals(Constant.COMMENT_COLUMN_PARENTCOMMENTID)) {
+                        currentComment.parentCommentid = new String(kv.getValue());
+                        continue;
+                    }
+
+                    if(new String(kv.getQualifier()).equals(Constant.COMMENT_COLUMN_PARENTMESSAGEID)) {
+                        currentComment.parentMessageid = new String(kv.getValue());
+                        continue;
+                    }
+
+                    if(new String(kv.getQualifier()).equals(Constant.COMMENT_COLUMN_TIMESTAMP)) {
+                        currentComment.timestamp = new String(kv.getValue());
+                    }
+                }
+            }
+            rs.close();
+        }
+        catch (IOException e) {
+            logger.info(e.getMessage());
+        }
+
+        if (currentComment != null) {
+            currentComment.commentid = currentRow;
+            ret.add(currentComment);
+        }
+
+        return ret;
+    }
+
+    public void addComment(RestComment message) throws RecordExistException {
+        logger.info("start add comment in DAL");
+
+        long timestamp = System.currentTimeMillis() / 1000;
+        String timestampStr = String.valueOf(timestamp);
+
+
+        Configuration conf = HBaseConfiguration.create();
+        conf.set("hbase.zookeeper.quorum", Constant.HBASE_ZOOKEEPER_QUORUM);
+
+        try {
+            HTable table = new HTable(conf, Constant.TABLE_COMMENT);
+            String key = _getKey(message.parentMessageid, timestampStr);
+
+            Get get = new Get(Bytes.toBytes(key));
+            Result result = table.get(get);
+            if (!result.isEmpty()) {
+                throw new RecordExistException();
+            }
+
+            Put put = new Put(Bytes.toBytes(key));
+
+            put.add(Bytes.toBytes(Constant.COMMENT_COLUMNFAMILY), Bytes.toBytes(Constant.COMMENT_COLUMN_USERNAME), Bytes.toBytes(message.username));
+            put.add(Bytes.toBytes(Constant.COMMENT_COLUMNFAMILY), Bytes.toBytes(Constant.COMMENT_COLUMN_CONTENT), Bytes.toBytes(message.content));
+            put.add(Bytes.toBytes(Constant.COMMENT_COLUMNFAMILY), Bytes.toBytes(Constant.COMMENT_COLUMN_PARENTCOMMENTID), Bytes.toBytes(message.parentCommentid));
+            put.add(Bytes.toBytes(Constant.COMMENT_COLUMNFAMILY), Bytes.toBytes(Constant.COMMENT_COLUMN_PARENTMESSAGEID), Bytes.toBytes(message.parentMessageid));
+            put.add(Bytes.toBytes(Constant.COMMENT_COLUMNFAMILY), Bytes.toBytes(Constant.COMMENT_COLUMN_USERNAME), Bytes.toBytes(timestampStr));
+            table.put(put);
+        }
+        catch (IOException e) {
+            logger.info(e.getMessage());
+        }
+
+        logger.info("finish add comment in DAL");
+    }
+
+    private String _getKey(String messageid, String timestampStr) {
+        return messageid + "_" + timestampStr;
+    }
+
+    private String _getEndKey(String stationName) {
+        return stationName + "`";
+    }
+
+    private String _getTimestampStr(String row) {
+        int index = row.lastIndexOf('_');
+        return row.substring(index + 1);
+    }
+
+}

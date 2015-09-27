@@ -2,7 +2,6 @@ package org.matrixdata.morph.servlet.rest.resource;
 
 import org.apache.log4j.Logger;
 import org.matrixdata.morph.constant.Constant;
-import org.matrixdata.morph.dal.exceptions.RecordExistException;
 import org.matrixdata.morph.servlet.rest.Response;
 import org.matrixdata.morph.servlet.rest.exception.MorphRestException;
 import org.matrixdata.morph.servlet.rest.pojo.RestPublicMessage;
@@ -27,7 +26,7 @@ public class PublicMessageResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPublicMessages() {
-        logger.info("Start get users.");
+        logger.info("Start get public messages.");
         Response response = new Response(Constant.STATUS_OK, Constant.STATUS_OK_STR, PublicMessageService.getPublicMessages());
         return response;
     }

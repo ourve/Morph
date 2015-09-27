@@ -42,6 +42,7 @@ public class PublicMessageDAL {
                 for (KeyValue kv : r.raw()) {
                     if ((currentMessage == null) || (!currentRow.equals(new String(kv.getRow())))) {
                         if (currentMessage != null) {
+                            currentMessage.messageid = currentRow;
                             ret.add(currentMessage);
                         }
                         currentMessage = new RestPublicMessage();
@@ -81,6 +82,7 @@ public class PublicMessageDAL {
         }
 
         if (currentMessage != null) {
+            currentMessage.messageid = currentRow;
             ret.add(currentMessage);
         }
 
@@ -111,6 +113,7 @@ public class PublicMessageDAL {
                 for (KeyValue kv : r.raw()) {
                     if ((currentMessage == null) || (!currentRow.equals(new String(kv.getRow())))) {
                         if (currentMessage != null) {
+                            currentMessage.messageid = currentRow;
                             ret.add(currentMessage);
                         }
                         currentMessage = new RestPublicMessage();
@@ -150,6 +153,7 @@ public class PublicMessageDAL {
         }
 
         if (currentMessage != null) {
+            currentMessage.messageid = currentRow;
             ret.add(currentMessage);
         }
 

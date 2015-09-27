@@ -2,7 +2,6 @@ package org.matrixdata.morph.servlet.rest.resource;
 
 import org.apache.log4j.Logger;
 import org.matrixdata.morph.constant.Constant;
-import org.matrixdata.morph.dal.exceptions.RecordExistException;
 import org.matrixdata.morph.servlet.rest.Response;
 import org.matrixdata.morph.servlet.rest.exception.MorphRestException;
 import org.matrixdata.morph.servlet.rest.pojo.RestUser;
@@ -94,6 +93,14 @@ public class UserResource {
     @Path("notauth")
     public Response getUserNotAuth() {
         Response response = new Response(Constant.AUTH_FAIL, Constant.AUTH_FAIL_STR, null);
+        return response;
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("login")
+    public Response userLogin() {
+        Response response = new Response(Constant.STATUS_OK, Constant.STATUS_OK_STR, null);
         return response;
     }
 }

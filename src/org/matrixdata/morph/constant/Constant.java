@@ -31,6 +31,16 @@ public class Constant {
     public static String PHONENUMBER_STATUS_UNAVAILABLE = "unavailable";
     public static String PHONENUMBER_STATUS_NOT_EXIST = "notexist";
 
+    // table comment
+    public static String TABLE_COMMENT = "comments";
+    public static String COMMENT_COLUMNFAMILY = "cf";
+    public static String COMMENT_COLUMN_COMMENTID = "commentid";
+    public static String COMMENT_COLUMN_USERNAME = "username";
+    public static String COMMENT_COLUMN_CONTENT = "content";
+    public static String COMMENT_COLUMN_TIMESTAMP = "timestamp";
+    public static String COMMENT_COLUMN_PARENTCOMMENTID = "parentCommentid";
+    public static String COMMENT_COLUMN_PARENTMESSAGEID = "parentMessageid";
+
     // table activearea
     public static String TABLE_ACTIVEAREA = "activeareas";
     public static String ACTIVEAREA_COLUMNFAMILY = "cf";

@@ -1,6 +1,8 @@
 package org.matrixdata.morph.servlet.rest.pojo;
 
 public class RestPublicMessage {
+    public String messageid;
+
     public String text;
 
     public String longitude;
