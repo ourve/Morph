@@ -112,7 +112,7 @@ public class StationDAL {
                     Bytes.toBytes(Constant.STATION_COLUMN_AREANUM));
             String number = new String(kv.getValue());
             List<String> areas = new ArrayList<>();
-            for (int i = 0; i < Integer.parseInt(number); i++) {
+            for (int i = 1; i <= Integer.parseInt(number); i++) {
                 KeyValue areakv = result.getColumnLatest(Bytes.toBytes(Constant.STATION_COLUMNFAMILY),
                         Bytes.toBytes(Constant.STATION_COLUMN_AREA_PREFIX + i));
                 String area = new String(areakv.getValue());
@@ -120,7 +120,7 @@ public class StationDAL {
             }
             ret = new RestStation(name, areas);
         }
-        catch (IOException e) {
+        catch (Exception e) {
             logger.info(e.getMessage());
         }
 
