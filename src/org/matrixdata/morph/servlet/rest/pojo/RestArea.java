@@ -40,4 +40,13 @@ public class RestArea {
         minLatitude = String.format("%f", box.getMinLat());
         maxLatitude = String.format("%f", box.getMaxLat());
     }
+
+    public void setInfo() {
+        GeoHash geoHash = GeoHash.fromGeohashString(areacode);
+        BoundingBox box = geoHash.getBoundingBox();
+        minLongitude = String.format("%f", box.getMinLon());
+        maxLongitude = String.format("%f", box.getMaxLon());
+        minLatitude = String.format("%f", box.getMinLat());
+        maxLatitude = String.format("%f", box.getMaxLat());
+    }
 }

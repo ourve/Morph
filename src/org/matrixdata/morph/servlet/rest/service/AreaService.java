@@ -2,16 +2,12 @@ package org.matrixdata.morph.servlet.rest.service;
 
 import ch.hsr.geohash.GeoHash;
 import org.matrixdata.morph.constant.Constant;
-import org.matrixdata.morph.dal.AreaDAL;
-import org.matrixdata.morph.dal.PublicMessageDAL;
-import org.matrixdata.morph.dal.StationDAL;
+import org.matrixdata.morph.dal.*;
 import org.matrixdata.morph.dal.exceptions.RecordExistException;
 import org.matrixdata.morph.location.Area;
 import org.matrixdata.morph.location.AreaManager;
 import org.matrixdata.morph.servlet.rest.exception.MorphRestException;
-import org.matrixdata.morph.servlet.rest.pojo.RestArea;
-import org.matrixdata.morph.servlet.rest.pojo.RestPublicMessage;
-import org.matrixdata.morph.servlet.rest.pojo.RestStation;
+import org.matrixdata.morph.servlet.rest.pojo.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -59,6 +55,10 @@ public class AreaService {
     public static List<RestArea> getAreas() {
         List<RestArea> areas = AreaDAL.getInstance().getAreas();
         return areas;
+    }
+
+    public static void deleteArea(String areacode) throws MorphRestException{
+        AreaDAL.getInstance().deleteArea(areacode);
     }
 
     public static RestArea getArea() {

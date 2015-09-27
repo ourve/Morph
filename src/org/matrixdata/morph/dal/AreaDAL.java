@@ -39,6 +39,7 @@ public class AreaDAL {
                 for (KeyValue kv : r.raw()) {
                     if ((currentArea == null) || (!currentArea.areacode.equals(new String(kv.getRow())))) {
                         if (currentArea != null) {
+                            currentArea.setInfo();
                             ret.add(currentArea);
                         }
                         currentArea = new RestArea();
@@ -58,6 +59,7 @@ public class AreaDAL {
         }
 
         if (currentArea != null) {
+            currentArea.setInfo();
             ret.add(currentArea);
         }
 

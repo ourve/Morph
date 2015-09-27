@@ -62,4 +62,20 @@ public class AreaResource {
         Response response = new Response(Constant.STATUS_OK, Constant.STATUS_OK_STR, AreaService.getAreas());
         return response;
     }
+
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{areacode}")
+    public Response deleteArea(@PathParam("areacode") String areacode) {
+        logger.info("Start delete area.");
+
+        try {
+            AreaService.deleteArea(areacode);
+        }
+        catch (MorphRestException e) {
+            return new Response(e.status, e.errorMsg, null);
+        }
+
+        return new Response(Constant.STATUS_OK, Constant.STATUS_OK_STR, null);
+    }
 }
