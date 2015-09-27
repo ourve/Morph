@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 
 @Path("area")
 public class AreaResource {
-    Logger logger = Logger.getLogger(AroundMessageResource.class);
+    Logger logger = Logger.getLogger(AreaResource.class);
 
     @GET
     @Path("/activeareas")

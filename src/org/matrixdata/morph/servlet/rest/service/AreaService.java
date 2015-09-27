@@ -54,6 +54,7 @@ public class AreaService {
 
     public static List<RestArea> getAreas() {
         List<RestArea> areas = AreaDAL.getInstance().getAreas();
+
         return areas;
     }
 

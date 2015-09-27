@@ -33,5 +33,11 @@ public class RestArea {
     public RestArea(String areacodeIn, String stationIn) {
         areacode = areacodeIn;
         station = stationIn;
+        GeoHash geoHash = GeoHash.fromBinaryString(areacodeIn);
+        BoundingBox box = geoHash.getBoundingBox();
+        minLongitude = String.format("%f", box.getMinLon());
+        maxLongitude = String.format("%f", box.getMaxLon());
+        minLatitude = String.format("%f", box.getMinLat());
+        maxLatitude = String.format("%f", box.getMaxLat());
     }
 }

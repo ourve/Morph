@@ -1,5 +1,6 @@
 package org.matrixdata.morph.dal;
 
+import ch.hsr.geohash.GeoHash;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.KeyValue;
@@ -8,6 +9,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.log4j.Logger;
 import org.matrixdata.morph.constant.Constant;
 import org.matrixdata.morph.dal.exceptions.RecordExistException;
+import org.matrixdata.morph.servlet.rest.exception.MorphRestException;
 import org.matrixdata.morph.servlet.rest.pojo.RestArea;
 
 import java.io.IOException;
@@ -62,11 +64,22 @@ public class AreaDAL {
         return ret;
     }
 
-    public void addArea(RestArea area) throws RecordExistException {
+    public void addArea(RestArea area) throws RecordExistException, MorphRestException {
         logger.info("start add area in DAL");
 
         Configuration conf = HBaseConfiguration.create();
         conf.set("hbase.zookeeper.quorum", Constant.HBASE_ZOOKEEPER_QUORUM);
+
+        try {
+            GeoHash geoHash = GeoHash.fromBinaryString(area.areacode);
+        }
+        catch (Exception e) {
+            throw new MorphRestException(Constant.BAD_REQUEST, "not a vaild gohash: " + area.areacode);
+        }
+
+        if (area.station == null) {
+            area.station = Constant.DEFAULT_STATION;
+        }
 
         try {
             HTable table = new HTable(conf, Constant.TABLE_AREA);
