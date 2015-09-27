@@ -2,6 +2,7 @@ package org.matrixdata.morph.constant;
 
 public class Constant {
     public static String HBASE_ZOOKEEPER_QUORUM = "localhost";
+    public static String DEFAULT_STATION = "default";
 
     // table user
     public static String TABLE_USER = "users";
@@ -45,6 +46,11 @@ public class Constant {
     public static String TABLE_ACTIVEAREA = "activeareas";
     public static String ACTIVEAREA_COLUMNFAMILY = "cf";
 
+    // table areas
+    public static String TABLE_AREA = "areas";
+    public static String AREA_COLUMNFAMILY = "cf";
+    public static String AREA_COLUMN_STATION = "station";
+
     // table station
     public static String TABLE_STATION = "stations";
     public static String STATION_COLUMNFAMILY = "cf";
@@ -53,6 +59,7 @@ public class Constant {
     public static int STATUS_OK = 200;
     public static String STATUS_OK_STR = "ok";
 
+    public static int BAD_REQUEST = 400;
     public static int AUTH_FAIL = 401;
     public static String AUTH_FAIL_STR = "auth fail";
 
